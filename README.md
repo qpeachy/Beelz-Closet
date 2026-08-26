@@ -1,3 +1,15 @@
+# Beelz' Closet
+
+Garde-robe numérique : pièces + contexte (météo, situation, mood) → tenue recommandée.  
+Stack : **Nx** · **Angular** · **NestJS** · **FastAPI** · **PostgreSQL**. Les photos ne vont pas en base.
+
+- **[SETUP.md](SETUP.md)** — prérequis, install, lancement, Postgres, tests, dépannage
+- Ci-dessous : cahier des charges
+
+**Phase actuelle : 0** — socle technique (health + Postgres). Détail d’exécution : [SETUP.md](SETUP.md).
+
+---
+
 # Cahier des charges — [Beelz' Closet]
 
 ## 1. Contexte et objectifs
