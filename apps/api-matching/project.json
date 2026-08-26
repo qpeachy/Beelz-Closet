@@ -1,0 +1,32 @@
+{
+  "name": "api-matching",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api-matching/src",
+  "projectType": "application",
+  "tags": ["scope:matching", "type:app"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run uvicorn api_matching.main:app --reload --host 0.0.0.0 --port 8000",
+        "cwd": "apps/api-matching",
+        "envFile": ".env"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run pytest",
+        "cwd": "apps/api-matching"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run ruff check .",
+        "cwd": "apps/api-matching"
+      }
+    }
+  }
+}
