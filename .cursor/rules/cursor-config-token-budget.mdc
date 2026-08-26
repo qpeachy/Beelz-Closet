@@ -1,0 +1,14 @@
+---
+description: Budget tokens — rules/skills/commands concis, anti-doublon
+globs: .cursor/rules/**/*.mdc,.cursor/skills/**/*.md,.cursor/commands/**/*.md
+alwaysApply: false
+---
+
+# .cursor — budget tokens
+
+Toute rule/skill/command coûte des tokens à chaque tour. Traiter comme du code budgété.
+
+1. Chercher un doublon (`Grep` + frontmatter des `.mdc`) avant de créer.
+2. Enrichir l’existant plutôt que multiplier les fichiers.
+3. **Une préoccupation**, viser **< 50 lignes**. `alwaysApply: true` = coût permanent → réserver au transverse (voix, métier-first, faits produit).
+4. Gros détail rarement utile → `.cursor/references/` (chargé via `Read` quand la phase le demande).
