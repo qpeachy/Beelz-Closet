@@ -39,13 +39,19 @@ docker compose up -d
 
 Fichier `.env` (gitignoré). Modèle : `.env.example`.
 
-| Variable | Défaut | Usage |
+| Variable | Défaut (exemple) | Usage |
 | --- | --- | --- |
-| `DATABASE_URL` | `postgres://beelz:beelz@localhost:5432/beelz_closet?sslmode=disable` | **Une** URL pour Nest et FastAPI |
+| `POSTGRES_USER` | `beelz` | User Postgres (Compose) |
+| `POSTGRES_PASSWORD` | *(secret, pas dans git)* | Mot de passe Postgres (Compose + URL dbmate) |
+| `POSTGRES_DB` | `beelz_closet` | Nom de la base |
+| `POSTGRES_PORT` | `5432` | Port publié sur l’hôte |
+| `DATABASE_URL` | `postgres://…@localhost:5432/…` | Nest et FastAPI sur l’hôte (`localhost`, pas `postgres`) |
 | `NEST_PORT` | `3333` | HTTP Nest (`GET /health`) |
 | `MATCHING_PORT` | `8000` | documenté ; le serve FastAPI est encore fixé à 8000 dans Nx |
 
-Identifiants Postgres Compose : user/password/db = `beelz` / `beelz` / `beelz_closet`.
+Compose lit le `.env` à la racine pour interpoler `compose.yaml`. Si tu changes user / mot de passe / db, **aligne aussi** `DATABASE_URL` (même identifiants, host `localhost`).
+
+Un mot de passe avec `@`, `:`, `/` casse l’URL : encoder ou en choisir un simple.
 
 ## Lancer les apps
 
