@@ -2,7 +2,7 @@
 
 Guide pour installer, lancer et vérifier le monorepo. Le produit (cahier des charges) est dans [`README.md`](README.md).
 
-**Phase actuelle : 0** — socle technique (health + Postgres). Pas d’upload, météo, reco, CSV, ni UI métier.
+**Phase actuelle : 1** — enregistrer une pièce (photo hors base + métriques manuelles). Pas de reco, pas de météo auto, pas d’UI métier.
 
 ## Prérequis
 
@@ -75,6 +75,29 @@ npx nx serve frontend          # http://localhost:4201  (squelette Angular)
 
 Nest n’utilise pas le port 3000 : il est souvent déjà pris par un autre projet.
 
+## Phase 1 — enregistrer une pièce
+
+Après `npm run db:migrate`, Nest expose :
+
+| Méthode | Chemin | Rôle |
+| --- | --- | --- |
+| `GET` | `/lookups` | catégories, matières, situations, moods |
+| `POST` | `/items` | photo (`file`) + champs formulaire |
+| `GET` | `/items` | pièces non supprimées |
+| `GET` | `/items/:id` | une pièce |
+| `PATCH` | `/items/:id` | JSON partiel |
+| `DELETE` | `/items/:id` | soft delete |
+| `GET` | `/files/:filename` | la photo (pas en SQL) |
+
+Règle métier : **catégorie obligatoire**, et **situation ou mood** (au moins un). `recordedAt` absent = maintenant. Utilisatrice par défaut : UUID seed `a0000000-0000-4000-8000-000000000001` (header `x-user-id` pour une autre).
+
+```bash
+curl -F file=@photo.jpg -F category=haut -F situation=travail \
+  http://localhost:3333/items
+```
+
+Photos dans `storage/` (ou `STORAGE_DIR`). JPEG, PNG, WebP.
+
 ## Base de données
 
 ```bash
@@ -84,7 +107,7 @@ npm run db:rollback   # dbmate down (dernière migration)
 npm run db:down       # arrête Compose (volume Postgres conservé)
 ```
 
-`docker compose up -d` relance Postgres + un one-shot dbmate. Schéma métier (`items`, `metrics`, …) = **phase 1**, pas encore.
+`docker compose up -d` relance Postgres + un one-shot dbmate. Schéma reco / stats = phases suivantes.
 
 ## Tests et lint
 

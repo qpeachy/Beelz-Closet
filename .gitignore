@@ -55,3 +55,4 @@ __screenshots__/
 **/.ruff_cache/
 *.pyc
 uv.lock.bak
+/storage
