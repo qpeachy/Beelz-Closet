@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from psycopg import Connection, connect
 from psycopg import Error as PsycopgError
 
+from api_matching.imports import router as imports_router
 from api_matching.outfits import router as outfits_router
 
 load_dotenv()
@@ -16,6 +17,7 @@ load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
 app = FastAPI(title="api-matching")
 app.include_router(outfits_router)
+app.include_router(imports_router)
 
 
 @contextmanager

@@ -117,6 +117,18 @@ curl -X POST http://localhost:8000/outfits \
 
 Réponse `201` : `outfits[].items` (id, url, catégorie, score) et `coherenceScore: null`. Catégorie obligatoire vide → `422` et `missing`. Libellé hors référentiel → `400`.
 
+## Phase 1bis — importer un CSV
+
+FastAPI `POST /imports`. Le CSV et le dossier de photos sont des chemins sur la machine qui lance l'API, pas des fichiers envoyés dans la requête. Colonnes obligatoires : `filename`, `category`, `recorded_at` (`AAAA-MM-JJ`), `situation`, `mood`. Une ligne sans fichier, ou avec une date illisible, est rejetée ; les autres continuent. Un libellé inconnu est créé. Relancer le même fichier au même jour ne crée pas une deuxième pièce. La météo vide reste vide (Open-Meteo est la phase 2).
+
+```bash
+curl -X POST http://localhost:8000/imports \
+  -H 'content-type: application/json' \
+  -d '{"csvPath":"/chemin/pieces.csv","photosDir":"/chemin/photos"}'
+```
+
+Réponse : `imported`, `rejected`, `duplicates`, `weatherMissing`, `errors[]` avec le numéro de ligne.
+
 ## Base de données
 
 ```bash
