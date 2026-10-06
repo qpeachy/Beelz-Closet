@@ -1,34 +1,40 @@
 # Corps de PR — Beelz' Closet
 
-Français. Métier d’abord (pièce, métrique, contrat, qualité, phase CDC), puis le mécanisme. Une PR = une phase ou un correctif : ne pas décrire le travail des phases déjà sur la base.
+Français. Le lecteur n'a pas suivi le diff. Partir du diff, pas des messages de commit. Une PR = une phase ou un correctif : ne pas décrire le travail déjà sur la base.
+
+Chaque promesse (statut HTTP, champ, fichier servi, libellé d'écran) doit exister dans le code. Si rien ne l'alimente, le dire dans **À savoir**, ou ne pas l'annoncer.
 
 ## Template
 
 ```markdown
 ## Description
 
-Pour chaque bloc du diff (schéma, writer API, stockage, contrat, doc), un paragraphe :
+Pour chaque comportement : **problème** (ce qu'on obtient sans le changement) → **cause** → **changement**, puis **pourquoi** (ce qui est stocké en SQL, ce qui reste un fichier ou un calcul).
 
-- ce qui est en place (tables, endpoints, règle de validation, fichier hors Postgres) ;
-- pourquoi (donnée exploitable plus tard, une seule base, phase CDC, contrainte métier) ;
-- ce que ça ne fait pas encore, si la phase suivante en dépend.
+Un exemple nommé avec des données réelles du dépôt (`haut`, `travail`, UUID seed, fichier JPEG). Pas d'exemple inventé. Un tableau avant / après seulement s'il décrit la réponse ou l'écran. Le plan de test n'y est pas.
+
+**À savoir** : ce que le diff ne fait pas (phase CDC suivante).
 
 ## Étapes de test
 
-Commandes réelles du diff : `npm run db:migrate`, `npx nx test|lint|serve <projet>`, curl ou parcours UI. Données minimales (lookup seed, header, fichier). Cas refusé (validation, 404, soft delete).
+Pas de tableau. Une étape = un parcours. Actions séparées par `→`. Le résultat est la ligne suivante, qui commence par `→`.
+
+Où lancer, quoi envoyer, quoi lire. Le texte attendu est celui de la réponse ou de l'écran, collé à `SETUP.md` et aux seeds.
+
+Migration, variable d'env ou lint : seulement s'ils sont dans le diff.
 
 ## Fichiers majeurs
 
-Grouper. Une ligne = chemin + rôle, pas seulement le nom.
+Quelques fichiers, dans l'ordre de lecture du comportement. Pas la liste complète du diff.
 
 - Migration SQL
 - Nest (UC, command/query, controller)
-- FastAPI / Angular seulement s’ils changent
-- Doc de phase (`.cursor/references/phase-*.md`, `SETUP.md`)
+- FastAPI / Angular seulement s'ils changent
+- `SETUP.md` ou la doc de phase si le parcours en dépend
 
 ## Nouveaux paquets / variables
 
-Paquets (`package.json`, `uv.lock`) et variables (`.env.example` uniquement). Usage. Écrire « Aucun » si le diff n’en ajoute pas. Ne jamais coller un secret.
+Paquets (`package.json`, `uv.lock`) et variables (`.env.example` uniquement). Usage. Écrire « Aucun » si le diff n'en ajoute pas. Ne jamais coller un secret.
 
 ## Checklist
 
@@ -42,6 +48,12 @@ Paquets (`package.json`, `uv.lock`) et variables (`.env.example` uniquement). Us
 
 | Section | Où lire |
 | --- | --- |
-| Pourquoi de la phase | `.cursor/references/phase-*.md` et `README.md` (CDC §6) |
+| Pourquoi de la phase | `README.md` (CDC §6) et `references/phase-*.md` du skill ticket s'il est là |
 | Comment lancer | `SETUP.md` |
-| Périmètre API | controllers et migration du diff, pas le CDC entier |
+| Périmètre | controllers et migration du diff, pas le CDC entier |
+
+## Exemple d'étape
+
+`npx nx serve api-nest` → `curl -F file=@photo.jpg -F category=haut -F situation=travail http://localhost:3333/items`
+
+→ `201`, corps avec une URL `/files/<uuid>.jpg`. `GET` sur cette URL renvoie le fichier.

@@ -16,7 +16,7 @@ Lire [pr-github.md](references/pr-github.md) avant de rédiger titre et corps. N
 1. Remote `origin` → `owner/repo` GitHub (`git@github.com:…` ou HTTPS).
 2. Base : argument utilisateur, sinon `main`.
 3. Branche courante ≠ base. `git fetch origin`. Diff `origin/<base>...HEAD` non vide.
-4. `gh pr list --head <branche> --state open` : si une PR existe, la mettre à jour seulement si demandé (`gh pr edit`).
+4. `gh pr list --head <branche> --state open` : si une PR existe, la mettre à jour seulement si demandé (`gh pr edit`). Dans ce cas, réécrire le corps depuis le diff courant.
 5. Branche non poussée ou en retard sur `origin` : stopper et demander avant `git push -u origin HEAD`.
 
 ## Titre
@@ -30,7 +30,7 @@ Générer le template de `pr-github.md` à partir de :
 - `git log origin/<base>..HEAD --reverse`
 - `git diff origin/<base>...HEAD`
 
-La section Description explique chaque bloc (quoi + pourquoi métier/data + ce que ça débloque). Pas une liste de fichiers.
+Description et étapes : problème, cause, changement, parcours en `→`. Le détail est dans `pr-github.md`. Pas une liste de fichiers.
 
 ## Création
 
