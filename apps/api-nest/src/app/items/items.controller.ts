@@ -89,6 +89,9 @@ export class ItemsController {
       temperature: numberField(body['temperature']),
       comment: text(body['comment']),
       recordedAt: dateField(body['recordedAt']),
+      latitude: optionalNumber(body['latitude'], 'latitude'),
+      longitude: optionalNumber(body['longitude'], 'longitude'),
+      city: text(body['city']),
     });
   }
 
@@ -155,12 +158,16 @@ function text(value: string | undefined): string | null {
 }
 
 function numberField(value: string | undefined): number | null {
+  return optionalNumber(value, 'temperature');
+}
+
+function optionalNumber(value: string | undefined, label: string): number | null {
   if (!value?.trim()) {
     return null;
   }
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
-    throw new BadRequestException('temperature doit être un nombre');
+    throw new BadRequestException(`${label} doit être un nombre`);
   }
   return parsed;
 }

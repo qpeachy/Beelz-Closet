@@ -10,6 +10,8 @@ from uuid import uuid4
 from psycopg import Connection
 from psycopg import Error as PsycopgError
 
+from api_matching.weather import resolve_weather
+
 ALLOWED_EXTENSIONS = {"jpg": "jpg", "jpeg": "jpg", "png": "png", "webp": "webp"}
 REQUIRED_COLUMNS = ("filename", "category", "recorded_at", "situation", "mood")
 
@@ -38,6 +40,7 @@ class ImportReport:
     rejected: int = 0
     duplicates: int = 0
     weather_missing: int = 0
+    weather_failed: int = 0
     errors: list[dict[str, object]] | None = None
 
     def as_dict(self) -> dict[str, object]:
@@ -46,6 +49,7 @@ class ImportReport:
             "rejected": self.rejected,
             "duplicates": self.duplicates,
             "weatherMissing": self.weather_missing,
+            "weatherFailed": self.weather_failed,
             "errors": self.errors or [],
         }
 
@@ -154,6 +158,7 @@ def _import_one(
         return
     content = photo.read_bytes()
     digest = hashlib.sha256(content).hexdigest()
+    filled = False
     existing = connection.execute(
         """
         SELECT item_id::text AS item_id
@@ -217,12 +222,37 @@ def _import_one(
             """,
             (user_id, digest, row.recorded_on, item_id),
         )
+        filled = _fill_weather(connection, row, item_id)
     except (OSError, PsycopgError, RuntimeError) as error:
         report.reject(row.line, str(error))
         return
     report.imported += 1
     if row.temperature is None and row.weather_condition is None:
+        if filled:
+            return
+        if row.latitude is not None and row.longitude is not None:
+            report.weather_failed += 1
         report.weather_missing += 1
+
+
+def _fill_weather(connection: Connection, row: CsvLine, item_id: str) -> bool:
+    if row.temperature is not None or row.weather_condition is not None:
+        return False
+    if row.latitude is None or row.longitude is None:
+        return False
+    reading, _error = resolve_weather(row.latitude, row.longitude, None, row.recorded_on)
+    if reading is None:
+        return False
+    weather_id = _ensure_name(connection, "weather_conditions", reading.condition)
+    connection.execute(
+        """
+        UPDATE metrics
+        SET temperature = %s, weather_condition_id = %s
+        WHERE item_id = %s
+        """,
+        (reading.temperature, weather_id, item_id),
+    )
+    return True
 
 
 def _photo_path(photos_dir: Path, filename: str) -> Path | None:

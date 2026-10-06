@@ -98,6 +98,29 @@ describe('(unit) CreateItemUc', () => {
     expect(create.input?.recordedAt).toBeInstanceOf(Date);
     expect(create.input?.situationId).toBe('sit');
   });
+
+  it('remplit température et condition avant l’insert quand un lieu est fourni', async () => {
+    const create = new CreateSpy();
+    const weather = {
+      resolve: jest.fn().mockResolvedValue({ temperature: 12, weatherCondition: 'pluie' }),
+    };
+    const uc = new CreateItemUc(new ResolveOk(resolved), new StoreSpy(), create, weather);
+    await uc.handle(request({ latitude: 45.75, longitude: 4.85 }));
+    expect(create.input?.temperature).toBe(12);
+    expect(weather.resolve).toHaveBeenCalled();
+  });
+
+  it('ne demande pas la météo si elle est déjà saisie', async () => {
+    const weather = { resolve: jest.fn() };
+    const uc = new CreateItemUc(
+      new ResolveOk(resolved),
+      new StoreSpy(),
+      new CreateSpy(),
+      weather,
+    );
+    await uc.handle(request({ weatherConditionName: 'pluie', latitude: 45.75, longitude: 4.85 }));
+    expect(weather.resolve).not.toHaveBeenCalled();
+  });
 });
 
 function itemRecord(): ItemRecord {

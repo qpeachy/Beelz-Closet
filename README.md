@@ -6,7 +6,7 @@ Stack : **Nx** · **Angular** · **NestJS** · **FastAPI** · **PostgreSQL**. Le
 - **[SETUP.md](SETUP.md)** — prérequis, install, lancement, Postgres, tests, dépannage
 - Ci-dessous : cahier des charges
 
-**Phase actuelle : 3** — composition d’une tenue à partir des pièces déjà enregistrées. Pas de météo auto, pas de cohérence couleur, pas d’UI métier. Détail d’exécution : [SETUP.md](SETUP.md).
+**Phase actuelle : 2** — import CSV et météo Open-Meteo, en plus de l’enregistrement et de la composition. Pas de cohérence couleur, pas d’UI métier. Détail d’exécution : [SETUP.md](SETUP.md).
 
 ---
 

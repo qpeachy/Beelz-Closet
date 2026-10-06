@@ -2,7 +2,7 @@
 
 Guide pour installer, lancer et vérifier le monorepo. Le produit (cahier des charges) est dans [`README.md`](README.md).
 
-**Phase actuelle : 3** — composer une tenue depuis les pièces enregistrées. Pas de météo auto, pas de cohérence couleur, pas d’UI métier.
+**Phase actuelle : 2** — import CSV et météo Open-Meteo. La composition de tenue est déjà là. Pas de cohérence couleur, pas d’UI métier.
 
 ## Prérequis
 
@@ -127,7 +127,19 @@ curl -X POST http://localhost:8000/imports \
   -d '{"csvPath":"/chemin/pieces.csv","photosDir":"/chemin/photos"}'
 ```
 
-Réponse : `imported`, `rejected`, `duplicates`, `weatherMissing`, `errors[]` avec le numéro de ligne.
+Réponse : `imported`, `rejected`, `duplicates`, `weatherMissing`, `weatherFailed`, `errors[]` avec le numéro de ligne.
+
+## Phase 2 — météo Open-Meteo
+
+Pas de clé. Si la pièce n'a ni température ni condition, et qu'un lieu est connu, FastAPI interroge Open-Meteo. `recordedAt` aujourd'hui : forecast. Une date passée : archive. Une date future : rien. La condition est ramenée à `ensoleillé`, `pluie`, `nuageux`, `venteux` ou `neige`. Vent ≥ 40 km/h sur un temps sec ou couvert → `venteux`. Si l'API ne répond pas, la pièce est quand même enregistrée.
+
+`POST /weather` sur le port 8000. L'import s'en sert quand le CSV a `latitude` et `longitude` et pas de météo. Nest, à la création, envoie `latitude` et `longitude`, ou `city`, vers ce endpoint (`MATCHING_URL`, défaut `http://localhost:8000`). Une météo déjà saisie n'est pas écrasée.
+
+```bash
+curl -X POST http://localhost:8000/weather \
+  -H 'content-type: application/json' \
+  -d '{"latitude":45.75,"longitude":4.85,"recordedAt":"2024-01-03"}'
+```
 
 ## Base de données
 

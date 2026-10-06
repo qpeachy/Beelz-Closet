@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CreateItemCommand } from './create-item.command';
 import { CreateItemUc } from './create-item.uc';
+import { MatchingWeather } from './matching-weather';
 import { FilesController } from './files.controller';
 import { GetItemQuery } from './get-item.query';
 import { ItemsController } from './items.controller';
@@ -32,14 +33,16 @@ import type {
     UpdateItemCommand,
     SoftDeleteItemCommand,
     StoreItemFile,
+    MatchingWeather,
     {
       provide: CreateItemUc,
       useFactory: (
         resolve: IResolveItemRefsQuery,
         store: IStoreItemFile,
         create: ICreateItemCommand,
-      ) => new CreateItemUc(resolve, store, create),
-      inject: [ResolveItemRefsQuery, StoreItemFile, CreateItemCommand],
+        weather: MatchingWeather,
+      ) => new CreateItemUc(resolve, store, create, weather),
+      inject: [ResolveItemRefsQuery, StoreItemFile, CreateItemCommand, MatchingWeather],
     },
     {
       provide: UpdateItemUc,
