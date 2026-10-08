@@ -6,7 +6,7 @@ Stack : **Nx** · **Angular** · **NestJS** · **FastAPI** · **PostgreSQL**. Le
 - **[SETUP.md](SETUP.md)** — prérequis, install, lancement, Postgres, tests, dépannage
 - Ci-dessous : cahier des charges
 
-**Phase actuelle : 0** — socle technique (health + Postgres). Détail d’exécution : [SETUP.md](SETUP.md).
+**Phase actuelle : 1** — enregistrement d’une pièce (photo + métriques manuelles). Pas de reco, pas de météo auto, pas d’UI métier. Détail d’exécution : [SETUP.md](SETUP.md).
 
 ---
 
