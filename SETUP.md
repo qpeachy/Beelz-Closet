@@ -2,7 +2,7 @@
 
 Guide pour installer, lancer et vérifier le monorepo. Le produit (cahier des charges) est dans [`README.md`](README.md).
 
-**Phase actuelle : 1** — enregistrer une pièce (photo hors base + métriques manuelles). Pas de reco, pas de météo auto, pas d’UI métier.
+**Phase actuelle : 3** — composer une tenue depuis les pièces enregistrées. Pas de météo auto, pas de cohérence couleur, pas d’UI métier.
 
 ## Prérequis
 
@@ -98,6 +98,25 @@ curl -F file=@photo.jpg -F category=haut -F situation=travail \
 
 Photos dans `storage/` (ou `STORAGE_DIR`). JPEG, PNG, WebP.
 
+## Phase 3 — composer une tenue
+
+FastAPI, port 8000. La météo du corps est celle du jour, saisie à la main. Elle n’est pas lue sur la pièce : elle sert à scorer les pièces qui ont déjà une température ou une condition. Sans haut, bas ou chaussures actifs, pas de tenue enregistrée.
+
+| Méthode | Chemin | Rôle |
+| --- | --- | --- |
+| `POST` | `/outfits` | une tenue et jusqu’à deux alternatives |
+| `GET` | `/outfits` | les tenues déjà enregistrées |
+
+Même utilisatrice que Nest : UUID seed, ou header `x-user-id`.
+
+```bash
+curl -X POST http://localhost:8000/outfits \
+  -H 'content-type: application/json' \
+  -d '{"situation":"travail","mood":"en forme","weatherCondition":"pluie","temperature":12}'
+```
+
+Réponse `201` : `outfits[].items` (id, url, catégorie, score) et `coherenceScore: null`. Catégorie obligatoire vide → `422` et `missing`. Libellé hors référentiel → `400`.
+
 ## Base de données
 
 ```bash
@@ -107,7 +126,7 @@ npm run db:rollback   # dbmate down (dernière migration)
 npm run db:down       # arrête Compose (volume Postgres conservé)
 ```
 
-`docker compose up -d` relance Postgres + un one-shot dbmate. Schéma reco / stats = phases suivantes.
+`docker compose up -d` relance Postgres + un one-shot dbmate. Les stats agrégées restent une phase suivante.
 
 ## Tests et lint
 

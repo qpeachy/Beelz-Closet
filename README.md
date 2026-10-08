@@ -6,7 +6,7 @@ Stack : **Nx** · **Angular** · **NestJS** · **FastAPI** · **PostgreSQL**. Le
 - **[SETUP.md](SETUP.md)** — prérequis, install, lancement, Postgres, tests, dépannage
 - Ci-dessous : cahier des charges
 
-**Phase actuelle : 1** — enregistrement d’une pièce (photo + métriques manuelles). Pas de reco, pas de météo auto, pas d’UI métier. Détail d’exécution : [SETUP.md](SETUP.md).
+**Phase actuelle : 3** — composition d’une tenue à partir des pièces déjà enregistrées. Pas de météo auto, pas de cohérence couleur, pas d’UI métier. Détail d’exécution : [SETUP.md](SETUP.md).
 
 ---
 
